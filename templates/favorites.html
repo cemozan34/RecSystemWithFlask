@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Favorites</title>
+</head>
+<body>
+{% if favbooks|length < 1 %}
+<h4>There are no files</h4>
+{% else %}
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Publisher</th>
+        <th>Main Topic</th>
+        <th>Sub Topics</th>
+
+    </tr>
+    {% for book in favbooks %}
+        <tr>
+            <td> {{book.title}}</td>
+            <td> {{book.author}}</td>
+            <td> {{book.publisher}}</td>
+            <td> {{book.mainTopic}}</td>
+            <td> {{book.subTopics}}</td>
+            <td>
+                <a href="/removeFavorite/{{book.bookID}}">Remove from Favorites</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<a href="/home" >Go back to Home Page</a>
+<a href="/logout" >Logout</a>
+
+{% endif %}
+</body>
+</html>

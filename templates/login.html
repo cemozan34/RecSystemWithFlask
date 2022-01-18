@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Recommendation System</title>
+</head>
+<body>
+  <form method="POST">
+      <input type="text" name="email" placeholder="Email">
+      <input type="password" name="password" placeholder="Password">
+      <input type="submit" name="submit" placeholder="Submit">
+  </form>
+{% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <h1>{{message}}</h1>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+</body>
+</html>

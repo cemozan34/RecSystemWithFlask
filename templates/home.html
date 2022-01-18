@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Homepage</title>
+</head>
+<body>
+<h1>HOMEPAGE</h1>
+<a href="logout">Logout</a>
+<a href="favorites">Favorites</a>
+{% if books|length < 1 %}
+<h4>There are no files</h4>
+{% else %}
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Publisher</th>
+        <th>Main Topic</th>
+        <th>Sub Topics</th>
+
+    </tr>
+    {% for book in books %}
+        <tr>
+            <td> {{book.title}}</td>
+            <td> {{book.author}}</td>
+            <td> {{book.publisher}}</td>
+            <td> {{book.mainTopic}}</td>
+            <td> {{book.subTopics}}</td>
+            <td>
+                <a href="/addFavorites/{{book.id}}">Add to Favorites</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+
+{% endif %}
+
+
+<form action="POST">
+    <select name="bookName">
+        {% for book in allbooks %}
+            <option value="{{book.id}}">{{book.title}}</option>
+        {% endfor %}
+    </select>
+    <button><a href="">Get Recommendation</a></button>
+</form>
+
+
+
+
+<nav class="pagination">{{ paginate.info|safe }}</nav>
+<nav class="pagination">{{ paginate.links|safe }}</nav>
+</body>
+<style>
+.pagination {
+
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  display: inline-block;
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 5px;
+  transition: background-color .3s;
+  border: 1px solid #ddd;
+}
+</style>
+</html>
