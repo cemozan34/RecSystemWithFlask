@@ -39,9 +39,9 @@
 
 
 <form action="POST">
-    <select name="bookName">
+    <select name="bookTitle">
         {% for book in allbooks %}
-            <option value="{{book.id}}">{{book.title}}</option>
+            <option value="{{book.title}}">{{book.title}}</option>
         {% endfor %}
     </select>
     <button><a href="">Get Recommendation</a></button>

@@ -1,9 +1,15 @@
-from flask import Flask, render_template, request, flash, session, redirect, url_for
+from flask import Flask, render_template, request, flash, session, redirect, url_for, jsonify
+from flask_cors import CORS
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import re
+
+from werkzeug.exceptions import abort
+
 from flask_session import Session
 from flask_paginate import Pagination
+
+# from rec_system import results, combine_result, transform_result, find_book
 
 app = Flask(__name__)
 
@@ -18,6 +24,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 
 Session(app)
+CORS(app)
 mysql = MySQL(app)
 
 
@@ -31,7 +38,7 @@ def index():
 @app.route('/home')
 def home():
     if not session.get("loggedin"):
-        return redirect("/")
+        abort(403)
     page = int(request.args.get("page", 1))
     rows_per_page = 5
     offset = (page - 1) * rows_per_page
@@ -103,7 +110,7 @@ def register():
 @app.route('/addFavorites/<int:id>', methods=["GET", "POST"])
 def addFavorites(id):
     if not session.get("loggedin"):
-        return redirect("/")
+        abort(403)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM book WHERE id = % s', (id,))
     book = cursor.fetchone()
@@ -118,7 +125,7 @@ def addFavorites(id):
 @app.route('/favorites')
 def favorites():
     if not session.get("loggedin"):
-        return redirect("/")
+        abort(403)
     userID = session['id']
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT * FROM book b, userfavorites f WHERE f.userID = % s AND f.bookID = b.bookID', (userID,))
@@ -130,11 +137,33 @@ def favorites():
 @app.route('/removeFavorite/<int:id>', methods=["GET", "POST"])
 def removeFavorite(id):
     if not session.get("loggedin"):
-        return redirect("/")
+        abort(403)
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('DELETE FROM userfavorites WHERE bookID = % s', (id,))
     mysql.connection.commit()
     return redirect(url_for("favorites"))
+
+
+# @app.route('/getRecommendation', methods=['GET'])
+# def getRecommendation():
+#     bookTitle = request.args.get('title')
+#     dataframe = results(bookTitle, find_book, combine_result, transform_result, True)
+#     # numpy_array = dataframe.to_numpy()
+#     return jsonify(dataframe)
+
+@app.errorhandler(404)
+def error404(error):
+    return render_template('error.html', message='Error 404')
+
+
+@app.errorhandler(403)
+def error403(error):
+    return render_template('loginfirst.html')
+
+
+@app.errorhandler(500)
+def error500(error):
+    return render_template('error.html', message='Error 500')
 
 
 if __name__ == "__main__":
